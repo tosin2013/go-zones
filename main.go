@@ -1,5 +1,10 @@
 package main
 
+import (
+	// Import the http-server functions
+	"./func.http-server.go"
+)
+
 // Func main should be as small as possible and do as little as possible by convention
 func main() {
 	// Generate our config based on the config supplied
