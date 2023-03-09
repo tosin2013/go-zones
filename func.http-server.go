@@ -32,7 +32,16 @@ func NewRouter(basePath string) *http.ServeMux {
 		fmt.Fprintf(w, "OK")
 	})
 
+	
+
 	return router
+}
+
+// NewHealthzEndpointHandler returns a handler function for the /healthz endpoint
+func NewHealthzEndpointHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "Healthz")
+	}
 }
 
 // RunHTTPServer will run the HTTP Server
