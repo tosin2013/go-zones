@@ -13,8 +13,8 @@ copy-config-dir-server:
 
 .PHONY: start-server-instance
 start-full-instance:
-	sudo podman run -p 8080:8080 -p -v $(CURDIR)/config:/etc/go-zones/:Z ${BINARY_NAME}
+	sudo podman run -p 8080:8080 -p -v $(CURDIR)/config:/etc/go-zones/:Z localhost/${BINARY_NAME}
 
 .PHONY: start-full-instance
 start-full-instance:
-	sudo podman run -p 8080:8080 -p -v $(CURDIR)/config:/etc/go-zones/:Z ${BINARY_NAME}
+	sudo podman run -p 8080:8080 -p -v $(CURDIR)/config:/etc/go-zones/:Z localhost/${BINARY_NAME}
