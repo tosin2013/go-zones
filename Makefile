@@ -11,6 +11,10 @@ build-image:
 copy-config-dir-server:
 	mkdir -p config && cp example.config.yml config/config.yml &&  yq -o=json example.server.yml > config/server.yml
 
+.PHONY: start-server-instance
+start-full-instance:
+	sudo podman run -p 8080:8080 -p -v $(CURDIR)/config:/etc/go-zones/:Z ${BINARY_NAME}
+
 .PHONY: start-full-instance
 start-full-instance:
 	sudo podman run -p 8080:8080 -p -v $(CURDIR)/config:/etc/go-zones/:Z ${BINARY_NAME}
