@@ -13,4 +13,4 @@ copy-config-dir:
 
 .PHONY: start-instance
 start-instance:
-	podman run -p 8080:8080 -v "$(pwd)"/config:/etc/go-zones/ ${BINARY_NAME}
+	podman run -p 8080:8080 -v "$(CURDIR)"/config:/etc/go-zones/ ${BINARY_NAME}
