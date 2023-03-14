@@ -20,7 +20,9 @@ $ ./go-zones -source=./example.server.yml -dir=./generated
 $ ./go-zones -mode server -config=./example.config.yml
 ```
 
-![20230314092944](https://i.imgur.com/ff0rVdD.png)
+![20230314102536](https://i.imgur.com/bWN7TBG.png)
+
+![20230314102611](https://i.imgur.com/pyiKLiE.png)
 
 ## Deployment - As a Container
 

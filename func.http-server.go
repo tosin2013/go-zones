@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/ghodss/yaml"
 	"io/ioutil"
 	"log"
 	"net"
@@ -13,6 +14,76 @@ import (
 	"syscall"
 	"time"
 )
+
+func convertJSONtoYAML(jsonPath string) error {
+	// Read JSON data from file
+	jsonData, err := ioutil.ReadFile(jsonPath)
+	if err != nil {
+		return err
+	}
+
+	// Convert JSON data to YAML
+	yamlData, err := yaml.JSONToYAML(jsonData)
+	if err != nil {
+		return err
+	}
+
+	// Write YAML data to file
+	err = ioutil.WriteFile("dns.server2.yaml", yamlData, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func updateJSONHandler(w http.ResponseWriter, r *http.Request) {
+	// Parse the incoming JSON data from the request body.
+	var newData map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&newData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Read the existing JSON data from the file.
+	file, err := ioutil.ReadFile("dns.server.json")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Merge the parsed JSON data with the existing JSON data.
+	var existingData map[string]interface{}
+	err = json.Unmarshal(file, &existingData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for k, v := range newData {
+		existingData[k] = v
+	}
+
+	// Write the updated JSON data back to the file.
+	updatedData, err := json.Marshal(existingData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = ioutil.WriteFile("dns.server2.json", updatedData, 0644)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	convertJSONtoYAML("dns.server2.json")
+
+	// Send a response indicating that the JSON was successfully updated.
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("JSON updated successfully"))
+}
 
 func dnsConfigsHandler(w http.ResponseWriter, r *http.Request) {
 	// Read the JSON data from a file
@@ -58,6 +129,7 @@ func NewRouter(basePath string) *http.ServeMux {
 	})
 
 	router.HandleFunc("/dns-config", dnsConfigsHandler)
+	router.HandleFunc("/update-dns-config", updateJSONHandler)
 
 	return router
 }
