@@ -6,3 +6,11 @@ BINARY_NAME=go-zones
 .PHONY: build-image
 build-image:
 	podman build -f Containerfile -t ${BINARY_NAME} .
+
+.PHONY: copy-config-dir
+copy-config-dir:
+	mkdir -p config && cp example.config.yml config/config.yml
+
+.PHONY: start-instance
+start-instance:
+	podman run -p 8080:8080 -v "$(pwd)"/config:/etc/go-zones/ ${BINARY_NAME}
