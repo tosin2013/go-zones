@@ -17,4 +17,4 @@ start-full-instance:
 
 .PHONY: start-full-instance
 start-full-instance:
-	sudo podman run -p 8080:8080 -p -v $(CURDIR)/config:/etc/go-zones/:Z localhost/${BINARY_NAME}
+	sudo podman run -p 8080:8080 -p  8053:8053  -v $(CURDIR)/config:/etc/go-zones/:Z localhost/${BINARY_NAME}
