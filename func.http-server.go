@@ -15,6 +15,22 @@ import (
 	"time"
 )
 
+func convertYAMLtoJSON(yamlFileName string) ([]byte, error) {
+	// Read the contents of the YAML file
+	yamlData, err := ioutil.ReadFile(yamlFileName)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the YAML data to JSON
+	jsonData, err := yaml.YAMLToJSON(yamlData)
+	if err != nil {
+		return nil, err
+	}
+
+	return jsonData, nil
+}
+
 func convertJSONtoYAML(jsonPath string) error {
 	// Read JSON data from file
 	jsonData, err := ioutil.ReadFile(jsonPath)
@@ -29,7 +45,7 @@ func convertJSONtoYAML(jsonPath string) error {
 	}
 
 	// Write YAML data to file
-	err = ioutil.WriteFile("dns.server2.yaml", yamlData, 0644)
+	err = ioutil.WriteFile("/etc/go-zones/server.yml", yamlData, 0644)
 	if err != nil {
 		return err
 	}
@@ -46,16 +62,17 @@ func updateJSONHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Read the existing JSON data from the file.
-	file, err := ioutil.ReadFile("dns.server.json")
+	// Read the YAML file into a byte slice
+	jsonData, err := convertYAMLtoJSON("/etc/go-zones/server.yml")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
+	fmt.Println(string(jsonData))
 
 	// Merge the parsed JSON data with the existing JSON data.
 	var existingData map[string]interface{}
-	err = json.Unmarshal(file, &existingData)
+	err = json.Unmarshal(jsonData, &existingData)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -72,13 +89,13 @@ func updateJSONHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ioutil.WriteFile("dns.server2.json", updatedData, 0644)
+	err = ioutil.WriteFile("/etc/go-zones/dns.temp.json", updatedData, 0644)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	convertJSONtoYAML("dns.server2.json")
+	convertJSONtoYAML("/etc/go-zones/dns.temp.json")
 
 	// Send a response indicating that the JSON was successfully updated.
 	w.WriteHeader(http.StatusOK)
@@ -86,18 +103,17 @@ func updateJSONHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func dnsConfigsHandler(w http.ResponseWriter, r *http.Request) {
-	// Read the JSON data from a file
-	data, err := ioutil.ReadFile("dns.server.json")
+	// Read the YAML data from a file
+	yamlData, err := ioutil.ReadFile("/etc/go-zones/server.yml")
 	if err != nil {
 		http.Error(w, "Failed to read file", http.StatusInternalServerError)
 		return
 	}
 
-	// Parse the JSON data
-	var dnsData interface{}
-	err = json.Unmarshal(data, &dnsData)
+	// Convert YAML to JSON
+	jsonData, err := yaml.YAMLToJSON(yamlData)
 	if err != nil {
-		http.Error(w, "Failed to parse JSON data", http.StatusInternalServerError)
+		http.Error(w, "Failed to convert YAML to JSON", http.StatusInternalServerError)
 		return
 	}
 
@@ -105,7 +121,7 @@ func dnsConfigsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Write the JSON data to the response writer
-	json.NewEncoder(w).Encode(dnsData)
+	w.Write(jsonData)
 }
 
 // NewRouter generates the router used in the HTTP Server

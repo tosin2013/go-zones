@@ -7,10 +7,10 @@ BINARY_NAME=go-zones
 build-image:
 	sudo podman build -f Containerfile -t ${BINARY_NAME} .
 
-.PHONY: copy-config-dir
-copy-config-dir:
-	mkdir -p config && cp example.config.yml config/config.yml
+.PHONY: copy-config-dir-server
+copy-config-dir-server:
+	mkdir -p config && cp example.config.yml config/config.yml &&  yq -o=json example.server.yml > config/server.yml
 
-.PHONY: start-instance
-start-instance:
-	sudo podman run -p 8080:8080 -v $(CURDIR)/config:/etc/go-zones/ ${BINARY_NAME}
+.PHONY: start-full-instance
+start-full-instance:
+	sudo podman run -p 8080:8080 -p -v $(CURDIR)/config:/etc/go-zones/:Z ${BINARY_NAME}
