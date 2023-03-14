@@ -20,6 +20,8 @@ $ ./go-zones -source=./example.server.yml -dir=./generated
 $ ./go-zones -mode server -config=./example.config.yml
 ```
 
+![20230314092944](https://i.imgur.com/ff0rVdD.png)
+
 ## Deployment - As a Container
 
 Pre-built container images can be found at https://quay.io/repository/kenmoini/go-zones
