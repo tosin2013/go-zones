@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -11,6 +13,29 @@ import (
 	"syscall"
 	"time"
 )
+
+func dnsConfigsHandler(w http.ResponseWriter, r *http.Request) {
+	// Read the JSON data from a file
+	data, err := ioutil.ReadFile("dns.server.json")
+	if err != nil {
+		http.Error(w, "Failed to read file", http.StatusInternalServerError)
+		return
+	}
+
+	// Parse the JSON data
+	var dnsData interface{}
+	err = json.Unmarshal(data, &dnsData)
+	if err != nil {
+		http.Error(w, "Failed to parse JSON data", http.StatusInternalServerError)
+		return
+	}
+
+	// Set the Content-Type header to application/json
+	w.Header().Set("Content-Type", "application/json")
+
+	// Write the JSON data to the response writer
+	json.NewEncoder(w).Encode(dnsData)
+}
 
 // NewRouter generates the router used in the HTTP Server
 func NewRouter(basePath string) *http.ServeMux {
@@ -32,16 +57,9 @@ func NewRouter(basePath string) *http.ServeMux {
 		fmt.Fprintf(w, "OK")
 	})
 
-	
+	router.HandleFunc("/dns-config", dnsConfigsHandler)
 
 	return router
-}
-
-// NewHealthzEndpointHandler returns a handler function for the /healthz endpoint
-func NewHealthzEndpointHandler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Healthz")
-	}
 }
 
 // RunHTTPServer will run the HTTP Server
