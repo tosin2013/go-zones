@@ -34,7 +34,9 @@ if [ ! "$DISABLE_ZONE_CHECKING" == "yes" ]; then /usr/sbin/named-checkconf -z "$
 
 echo -e "\nSTARTING BIND DNS SERVER...\n"
 
+echo -e "\nSTARTING GO ZONES SERVER...\n"
+go-zones -mode server -config "${SERVER_CONFIG_YAML}" &
+
 /usr/sbin/named -u named -c ${NAMEDCONF} $OPTIONS -g
 
-echo -e "\nSTARTING GO ZONES SERVER...\n"
-go-zones -mode server -config "${SERVER_CONFIG_YAML}"
+
