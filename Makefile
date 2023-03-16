@@ -5,7 +5,7 @@ BINARY_NAME=go-zones
 
 .PHONY: build-image
 build-image:
-	sudo podman build -f Containerfile -t ${BINARY_NAME} .
+	sudo podman build -f Containerfile-to-BIND-FULL -t ${BINARY_NAME} .
 
 .PHONY: copy-config-dir-server
 copy-config-dir-server:
