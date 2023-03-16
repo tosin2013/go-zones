@@ -17,7 +17,7 @@ start-server-instance:
 
 .PHONY: start-full-instance
 start-full-instance:
-	sudo podman run -p 8080:8080 -p 53:53  -v $(CURDIR)/config:/etc/go-zones/:Z localhost/${BINARY_NAME}
+	sudo podman run -p 8080:8080 -p 53  -v $(CURDIR)/config:/etc/go-zones/:Z localhost/${BINARY_NAME}
 
 clean:
 	sudo podman image prune --force --filter "label=io.containers.image.dangling=true"
