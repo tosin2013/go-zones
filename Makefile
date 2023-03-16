@@ -20,8 +20,11 @@ start-full-instance:
 	sudo podman run -p 8080:8080 -p 53  -v $(CURDIR)/config:/etc/go-zones/:Z localhost/${BINARY_NAME}
 
 clean:
+    sudo podman stop  $$(sudo podman ps -aq) 
+	sudo podman rm $$(sudo podman ps -aq) 
 	sudo podman image prune --force --filter "label=io.containers.image.dangling=true"
 	sudo podman rmi -f ${BINARY_NAME}
+
 
 
 
