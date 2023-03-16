@@ -21,10 +21,8 @@ start-full-instance:
 
 .PHONY: clean
 clean:
-    -sudo podman stop  $$(sudo podman ps -aq) 
-	-sudo podman rm $$(sudo podman ps -aq) 
-	-sudo podman image prune --force --filter "label=io.containers.image.dangling=true"
-	-sudo podman rmi -f ${BINARY_NAME}
+	sudo podman image prune --force --filter "label=io.containers.image.dangling=true"
+	sudo podman rmi -f ${BINARY_NAME}
 
 
 
