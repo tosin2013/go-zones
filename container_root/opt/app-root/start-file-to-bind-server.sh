@@ -32,8 +32,6 @@ echo -e "\nVALIDATING BIND DNS SERVER CONFIGURATION...\n"
 
 if [ ! "$DISABLE_ZONE_CHECKING" == "yes" ]; then /usr/sbin/named-checkconf -z "$NAMEDCONF"; else echo "Checking of zone files is disabled"; fi
 
-echo -e "\nGENERATING ZONES AND CONFIG...\n"
-go-zones -mode file -source "${SERVER_CONFIG_YAML}" -dir "${GENERATED_DIR}" &
 
 echo -e "\nSTARTING GO ZONES SERVER...\n"
 go-zones -mode server -config "${SERVER_CONFIG_YAML}" &
