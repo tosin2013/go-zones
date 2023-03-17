@@ -15,6 +15,10 @@ copy-config-dir-server:
 start-server-instance:
 	sudo podman run -p 8080:8080 -p -v $(CURDIR)/config:/etc/go-zones/:Z localhost/${BINARY_NAME}
 
+.PHONY: copy-config-dir-server
+copy-config-dir-server:
+	mkdir -p config && cp example.config.yml config/config.yml &&  yq -o=json example.server.yml > config/server.yml
+
 .PHONY: start-full-instance
 start-full-instance:
 	sudo podman run -p 8080:8080 -p 8053:53  -v $(CURDIR)/config:/etc/go-zones/:Z localhost/${BINARY_NAME}
@@ -24,6 +28,9 @@ clean:
 	sudo podman image prune --force --filter "label=io.containers.image.dangling=true"
 	sudo podman rmi -f ${BINARY_NAME}
 
-
+.PHONY: stop
+stop:
+	sudo podman stop $(shell sudo podman ps -a -q)
+	sudo podman rm $(shell sudo podman ps -a -q)
 
 
