@@ -10,6 +10,7 @@ GoZones can operate in single-file input/output batches, or via an HTTP server, 
 - **File Mode**: GoZones will read a zone file and generate the BIND configuration at a specified path.  Supported by the standalone binary and container images.
 - **File Mode Fronting to BIND**: GoZones will read a zone file and generate the BIND configuration at a specified path, which will then start a BIND server  Supported in a container image.
 
+[Developer Documentation](Makefile-README.md)
 ## Example Commands & Parameters
 
 ```bash
